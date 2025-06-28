@@ -35,14 +35,22 @@ PlantPot is a Django-powered e-commerce platform crafted for selling indoor plan
 
 ## 📦 Tech Stack
 
-| Layer      | Technology       |
-|------------|------------------|
-| Backend    | Django 3.2       |
-| Frontend   | HTML, CSS, Bootstrap 5, JS, jQuery |
-| Auth       | Django Auth, OTP login |
-| Database   | SQLite (dev), PostgreSQL (prod-ready) |
-| Static/Media | Django static files, Image uploads |
-| Deployment | Ready for Heroku, PythonAnywhere, or VPS |
+| Layer         | Technology                                                                |
+|---------------|---------------------------------------------------------------------------|
+| Backend       | Django — RESTful architecture, clean MVT design                           |
+| Frontend      | HTML, CSS, Bootstrap 5, JavaScript, jQuery — fully responsive UI          |
+| Auth System   | Django Auth + OTP-based login — secure and mobile-friendly authentication |
+| Cart & Order  | Dynamic cart with quantity updates, item removal, subtotal calculations   |
+| Wishlist      | Persistent wishlist with toggle feature                                   |
+| Database      | SQLite for development, mySQL for production                              |
+| Static/Media  | Django's static/media handling — supports image upload for products       |
+| Payment       |    Ready for integration with Stripe (WIP)                                |
+| Confetti UX   | Confetti animation & dynamic greeting overlay on successful OTP login     |
+| Screenshots   | Included in `/screenshots` for visual walkthrough                         |
+| Deployment    | Easy deploy on PythonAnywhere, Render                                     |
+| Responsiveness| Fully mobile-optimized: form flows, modals, and navbar                    |
+| Modularity    | Organized app structure for scalability (`plantapp/`, `templates/`, etc.) |
+
 
 ---
 
