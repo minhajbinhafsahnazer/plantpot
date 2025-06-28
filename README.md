@@ -2,7 +2,14 @@
 
 PlantPot is a Django-powered e-commerce platform crafted for selling indoor plants, interior decorations, furniture, and artisanal pieces. It’s a responsive and modern web app designed with simplicity, speed, and user experience in mind.
 
-![PlantPot Screenshot](https://your-screenshot-url.com) <!-- Optional demo image -->
+![login](screenshots/login.png)
+![Nav-bar](screenshots/home.png)
+![Home](screenshots/home1.png)
+![Home](screenshots/home2.png)
+![Home](screenshots/home3.png)
+![Product List View](screenshots/product_list.png)
+![wishlist](screenshots/wishlist.png)
+![checkout_cart](screenshots/checkin.png)
 
 ---
 
