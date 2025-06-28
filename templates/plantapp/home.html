@@ -1,0 +1,162 @@
+<!-- templates/plantapp/home.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="category-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Explore the elegance of our handpicked realms</h2>
+        <div class="category-wrapper d-flex overflow-auto gap-4">
+            {% for category in categories %}
+            <a href="{% url 'category_products' category.id %}" class="text-decoration-none">
+                <div class="category-card">
+                    <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                    <div class="overlay-box">
+                        <p class="category-name" style="text-align: center; color: #6d421a;">{{ category.name }}</p>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<!-- Confetti JS -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+{% if show_party_popper %}
+<script>
+  setTimeout(() => {
+    const duration = 2 * 1000;
+    const end = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+    function randomRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    const interval = setInterval(() => {
+      const timeLeft = end - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      confetti({
+        particleCount: 50,
+        origin: {
+          x: randomRange(0.1, 0.9),
+          y: Math.random() - 0.2
+        },
+        ...defaults
+      });
+    }, 200);
+  }, 500); // Slight delay after page load
+</script>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+
+
+{% if show_party_popper %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Show the greeting modal
+    const modal = new bootstrap.Modal(document.getElementById('greetingModal'));
+    modal.show();
+
+    // Custom confetti with emoji 🌿
+    const end = Date.now() + 2000;
+    const emojiConfetti = () => {
+      confetti({
+        particleCount: 20,
+        angle: 90,
+        spread: 100,
+        origin: { y: 0.6 },
+        shapes: ['text'],
+        scalar: 2,
+        ticks: 100,
+        gravity: 0.6,
+        decay: 0.95,
+        emoji: '🌿'
+      });
+    };
+
+    const interval = setInterval(() => {
+      if (Date.now() > end) {
+        clearInterval(interval);
+      } else {
+        emojiConfetti();
+      }
+    }, 300);
+  });
+</script>
+{% endif %}
+
+{% if show_party_popper %}
+<!-- Greeting Overlay -->
+<div id="greetingOverlay" style="
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(40, 167, 69, 0.85); /* Bootstrap green with transparency */
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+">
+  🎉 Greetings, {{ request.user.username }}!
+</div>
+{% endif %}
+
+{% if show_party_popper %}
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Show floating greeting
+    const overlay = document.getElementById('greetingOverlay');
+    overlay.style.opacity = 1;
+
+    // Hide after 2 seconds
+    setTimeout(() => {
+      overlay.style.opacity = 0;
+    }, 2000);
+
+    // Leaf confetti 🎉
+    const end = Date.now() + 1500;
+    const emojiConfetti = () => {
+      confetti({
+        particleCount: 20,
+        angle: 90,
+        spread: 100,
+        origin: { y: 0.6 },
+        shapes: ['text'],
+        scalar: 1.8,
+        ticks: 100,
+        gravity: 0.5,
+        decay: 0.93,
+        emoji: ['🌿', '🍃', '🍀'][Math.floor(Math.random() * 3)]
+      });
+    };
+
+    const interval = setInterval(() => {
+      if (Date.now() > end) {
+        clearInterval(interval);
+      } else {
+        emojiConfetti();
+      }
+    }, 250);
+  });
+</script>
+{% endif %}
+
+
+
+
+{% endblock %}

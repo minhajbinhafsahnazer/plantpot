@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="text-success mb-4">🛒 Your Cart</h2>
+
+  {% if items %}
+    <form method="post" action="{% url 'update_cart_items' %}">
+      {% csrf_token %}
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Image</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+            <tr>
+              <td>{{ item.product.name }}</td>
+              <td><img src="{{ item.product.image.url }}" width="60" height="60" style="object-fit: cover;"></td>
+              <td>₹{{ item.product.price }}</td>
+              <td>
+                <input type="number" name="quantity_{{ item.id }}" value="{{ item.quantity }}" min="1" class="form-control w-50">
+              </td>
+              <td>₹{{ item.subtotal }}</td>
+              <td>
+                <a href="{% url 'remove_cart_item' item.id %}" class="btn btn-outline-danger">❌</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="text-end mt-4">
+        <h4>Total: ₹{{ cart.total_price }}</h4>
+        <button type="submit" class="btn btn-outline-primary">Update Quantities</button>
+        <a href="#" class="btn btn-success">Proceed to Checkout</a>
+      </div>
+    </form>
+  {% else %}
+    <p class="text-muted">Your cart is empty.</p>
+  {% endif %}
+</div>
+{% endblock %}
