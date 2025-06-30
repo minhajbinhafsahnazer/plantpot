@@ -27,7 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'plantapp',  # Custom app for plant pot management
+    'plantapp.apps.PlantappConfig',
+    'widget_tweaks',   # Custom app for plant pot management
 ]
 
 MIDDLEWARE = [

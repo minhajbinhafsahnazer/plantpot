@@ -17,8 +17,16 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-
     
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    address = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username
+
 class Wishlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -29,6 +37,8 @@ class Wishlist(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.product.name}"
+    
+
 
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

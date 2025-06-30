@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET, require_POST
 from django.http import HttpResponseRedirect, JsonResponse
+from .forms import EditProfileForm
+from .models import UserProfile
 
 from .models import Category, Product, Wishlist, Cart, CartItem
 from .forms import RegisterForm
@@ -136,9 +138,67 @@ def view_product(request, product_id):
     })
 
 
-# -----------------------------
-# ❤️ WISHLIST VIEWS
-# -----------------------------
+@login_required
+def profile_view(request):
+    user = request.user
+    profile, created = UserProfile.objects.get_or_create(user=user)
+
+    if request.method == "POST":
+        # Get form fields
+        first_name = request.POST.get("first_name", "").strip()
+        email = request.POST.get("email", "").strip()
+        address = request.POST.get("address", "").strip()
+
+        # Update and save user fields
+        if first_name:
+            user.first_name = first_name
+        if email:
+            user.email = email
+        user.save()
+
+        # Update profile address
+        if address:
+            profile.address = address
+            profile.save()
+
+        messages.success(request, "Profile updated successfully.")
+
+    wishlist_count = Wishlist.objects.filter(user=user).count()
+    cart = Cart.objects.filter(user=user).first()
+    cart_count = cart.items.count() if cart else 0
+
+    return render(request, 'plantapp/profile.html', {
+        'profile': profile,
+        'wishlist_count': wishlist_count,
+        'cart_count': cart_count,
+    })
+
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    profile, _ = UserProfile.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            user.email = form.cleaned_data['email']
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.save()
+            form.save()
+            messages.success(request, "Profile updated successfully.")
+            return redirect('profile')
+    else:
+        form = EditProfileForm(instance=profile, initial={
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name
+        })
+
+    return render(request, 'plantapp/edit_profile.html', {'form': form})
+
+
 
 @login_required
 def wishlist(request):

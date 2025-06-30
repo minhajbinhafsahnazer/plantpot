@@ -13,6 +13,8 @@ urlpatterns = [
     # Category & Products
     path('category/<int:category_id>/', views.category_products_view, name='category_products'),
     path('product/<int:product_id>/', views.view_product, name='view_product'),
+    path('profile/', views.profile_view, name='profile'),
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
 
     # Wishlist
     path('wishlist/', views.wishlist, name='wishlist'),
