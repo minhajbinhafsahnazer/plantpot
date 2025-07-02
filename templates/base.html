@@ -90,14 +90,18 @@
     {% endif %}
 
     <!-- HERO SECTION (Only on Home Page) -->
-    {% if request.resolver_match.url_name == 'home' %}
-    <header class="hero-section d-flex align-items-center justify-content-center text-white text-center">
-        <div class="container">
-            <h1 class="display-3 fw-bold" style="color: #80ab58;">Welcome to PlantPot</h1>
-            <p class="lead" style="color: black;">Decorate your world with plants and art.</p>
-        </div>
-    </header>
-    {% endif %}
+        {% if request.resolver_match.url_name == 'home' %}
+        <header class="hero-section d-flex align-items-center justify-content-center text-white text-center"
+                style="background-image: url('{% static 'images/hero.jpg' %}'); 
+                      background-size: cover; 
+                      background-position: center; 
+                      height: 400px;">
+            <div class="container">
+                <h1 class="display-3 fw-bold" style="color: #80ab58;">Welcome to PlantPot</h1>
+                <p class="lead" style="color: black;">Decorate your world with plants and art.</p>
+            </div>
+        </header>
+        {% endif %}
 
     <!-- BODY CONTENT -->
     <main class="container my-5">
