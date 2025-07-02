@@ -6,6 +6,8 @@ PlantPot is a Django-powered e-commerce platform crafted for selling, Carpets, P
 ![login](screenshots/login.png)
 # nav-bar & hero
 ![Nav-bar](screenshots/home.png)
+# full home page
+![Full Home](screenshots/plantpot_scrollshot.png)
 # home page
 ![Home](screenshots/home1.png)
 # home page & footer
