@@ -1,4 +1,8 @@
+import json
 import random
+import requests
+import shlex
+import subprocess
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
@@ -7,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET, require_POST
 from django.http import HttpResponseRedirect, JsonResponse
 from .forms import EditProfileForm
+from django.views.decorators.csrf import csrf_exempt
 from .models import UserProfile
 
 from .models import Category, Product, Wishlist, Cart, CartItem
@@ -291,3 +296,72 @@ def remove_cart_item(request, item_id):
     item.delete()
     messages.success(request, "Item removed from cart.")
     return redirect('cart')
+
+# -----------------------------
+# 🤖 CHATBOT VIEW
+
+
+# -----------------------------
+@csrf_exempt
+@require_POST
+def chat_with_ai(request):
+    try:
+        data = json.loads(request.body)
+        user_message = data.get('message', '').strip()
+
+        if not user_message:
+            return JsonResponse({'response': "Please enter a message."})
+
+        # 🧠 Better prompt structure using LLaMA-style chat tokens
+        prompt = f"""
+<|system|>
+You are PlantPot AI, a smart and friendly assistant for the PlantPot decor store.
+
+The store offers a wide range of interior decor products, including:
+- Designer lights (ambient, pendant, ceiling-mounted, and artistic pieces)
+- Designer carpets (leaf-patterned, minimal, boho, and nature-themed)
+- Indoor and outdoor plant pots (ceramic, terracotta, matte-finish, eco-friendly)
+- Table lamps (modern, rustic, compact for nightstands or work desks)
+
+You help users:
+- Find the right product based on their preferences (style, size, room type, color)
+- Get information about orders, returns, and delivery
+- Provide decor ideas and practical suggestions for styling different spaces
+- Recommend items based on themes like modern, vintage, cozy, or nature-inspired setups
+- Answer general questions about the store and its offerings
+- give contact information for customer support
+- plantpots owner is minhaj
+
+Speak in a warm, clear, human-like tone. Avoid repeating your identity in every response. Keep answers relevant, Keep ansers compact,  helpful, and to the point. Guide users conversationally — like a trusted home decor advisor.
+
+<|user|>
+{user_message}
+<|assistant|>
+"""
+
+        result = subprocess.run(
+            ['C:\\Users\\mirza\\AppData\\Local\\Programs\\Ollama\\ollama.exe', 'run', 'llama3:8b'],
+            input=prompt,
+            text=True,
+            capture_output=True,
+            encoding='utf-8',
+            timeout=30
+        )
+
+        output = result.stdout.strip()
+        if not output:
+            output = "🤖 Sorry, no response."
+
+        # 🧽 Clean accidental echoes like the prompt
+        if "PlantPot AI" in output and "I'm" in output:
+            lines = output.split("\n")
+            for i, line in enumerate(lines):
+                if "PlantPot AI" in line and "I'm" in line:
+                    # skip this intro line
+                    output = "\n".join(lines[i+1:])
+                    break
+
+        return JsonResponse({'response': output.strip()})
+
+    except Exception as e:
+        return JsonResponse({'response': f"Error: {str(e)}"})

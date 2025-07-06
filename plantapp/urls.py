@@ -27,4 +27,7 @@ urlpatterns = [
     path('cart/', views.cart_view, name='cart'),  # ✅ Use correct view
     path('cart/update/', views.update_cart_items, name='update_cart_items'),
     path('cart/remove/<int:item_id>/', views.remove_cart_item, name='remove_cart_item'),
+
+    #chatbot
+    path('chatbot/', views.chat_with_ai, name='chat_with_ai'),
 ]
