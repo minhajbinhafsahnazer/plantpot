@@ -1,4 +1,5 @@
-# 🪴 PlantPot — E-commerce Platform for Interior Decor & Designer Goods
+# 🪴 PlantPot — E-commerce Platform With Ai Built In ChatBot (OLLAMA 3:88)
+# for Interior Decor & Designer Goods 
 
 PlantPot is a Django-powered e-commerce platform crafted for selling, Carpets, Pots, lights, interior decorations, furniture, and artisanal pieces. It’s a responsive and modern web app designed with simplicity, speed, and user experience in mind.
 
@@ -6,6 +7,8 @@ PlantPot is a Django-powered e-commerce platform crafted for selling, Carpets, P
 ![login](screenshots/login.png)
 # nav-bar & hero
 ![Nav-bar](screenshots/home.png)
+# Ai ChatBot
+![Ai ChatBot](screenshots/ai_chatbot.png)
 # full home page
 ![Full Home](screenshots/platpot_scrollshot.jpg)
 # home page
@@ -24,6 +27,7 @@ PlantPot is a Django-powered e-commerce platform crafted for selling, Carpets, P
 ## ✨ Features
 
 - 🛍️ **Product Listings** with categories (plants, decor, furniture, more)
+- 💡 **Built in Ai ChatBot** Ollama 3, 88 B model
 - 🔍 **Product Detail View** with price, description, and image
 - 🧡 **Wishlist** system with toggle support
 - 🛒 **Shopping Cart** with quantity updates and subtotal calculation
