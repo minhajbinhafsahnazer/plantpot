@@ -6,4 +6,5 @@ db.sqlite3
 /media/
 /staticfiles/
 /venv/
-/migrations/
+/migrations/__pycache__/
+*.pyc
