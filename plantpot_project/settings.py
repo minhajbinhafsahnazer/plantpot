@@ -75,7 +75,14 @@ WSGI_APPLICATION = 'plantpot_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-if os.getenv("VERCEL"):
+is_cloud = bool(
+    os.getenv("VERCEL")
+    or os.getenv("VERCEL_ENV")
+    or os.getenv("AWS_LAMBDA_FUNCTION_NAME")
+    or sys.platform != 'win32'
+)
+
+if is_cloud:
     import shutil
     tmp_db = Path('/tmp/db.sqlite3')
     bundled_db = BASE_DIR / 'db.sqlite3'
@@ -87,7 +94,7 @@ if os.getenv("VERCEL"):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': tmp_db,
+            'NAME': str(tmp_db),
         }
     }
 else:
