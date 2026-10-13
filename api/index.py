@@ -1,5 +1,6 @@
 import os
 import sys
+import urllib.parse
 from pathlib import Path
 
 # Add project root directory to Python path
@@ -61,15 +62,37 @@ try:
 except Exception as e:
     print('Vercel startup notice:', e)
 
+django_wsgi_app = get_wsgi_application()
+
 class VercelPathMiddleware:
-    """Restores actual requested URL from Vercel rewrite headers."""
+    """Restores actual requested URL from Vercel rewrites and forward headers."""
     def __init__(self, wsgi_app):
         self.wsgi_app = wsgi_app
 
     def __call__(self, environ, start_response):
-        matched = environ.get('HTTP_X_MATCHED_PATH')
-        if matched:
-            environ['PATH_INFO'] = matched
+        query = environ.get('QUERY_STRING', '')
+        params = urllib.parse.parse_qs(query)
+
+        # 1. First priority: explicit __path__ parameter from vercel.json rewrite
+        if '__path__' in params:
+            raw_path = params.pop('__path__')[0]
+            environ['QUERY_STRING'] = urllib.parse.urlencode(params, doseq=True)
+            if not raw_path.startswith('/'):
+                raw_path = '/' + raw_path
+            environ['PATH_INFO'] = raw_path
+            return self.wsgi_app(environ, start_response)
+
+        # 2. Check header fallbacks from Vercel
+        for key in ('HTTP_X_FORWARDED_URI', 'RAW_URI', 'REQUEST_URI', 'HTTP_X_MATCHED_PATH'):
+            val = environ.get(key)
+            if val and 'index.py' not in val:
+                environ['PATH_INFO'] = '/' + val.split('?')[0].lstrip('/')
+                return self.wsgi_app(environ, start_response)
+
+        # 3. If PATH_INFO is still pointing directly to index.py, route to root
+        if environ.get('PATH_INFO', '').endswith('index.py'):
+            environ['PATH_INFO'] = '/'
+
         return self.wsgi_app(environ, start_response)
 
-app = VercelPathMiddleware(get_wsgi_application())
+app = VercelPathMiddleware(django_wsgi_app)
