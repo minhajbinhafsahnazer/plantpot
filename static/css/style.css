@@ -148,3 +148,479 @@ body {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
 }
+
+/* ==========================================================================
+   🌿 MODERN GEMINI CHATBOT WIDGET STYLES
+   ========================================================================== */
+
+.chat-fab {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 1050;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.45);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.chat-fab:hover {
+    transform: translateY(-4px) scale(1.06);
+    box-shadow: 0 14px 32px rgba(16, 185, 129, 0.6);
+    color: #ffffff;
+}
+
+.chat-fab-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.chat-fab-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: #f59e0b;
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.chat-fab-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(16, 185, 129, 0.4);
+    animation: chatPulse 2.5s infinite;
+    z-index: -1;
+}
+
+@keyframes chatPulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+    70% {
+        transform: scale(1.35);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1.4);
+        opacity: 0;
+    }
+}
+
+.chat-card {
+    position: fixed;
+    bottom: 98px;
+    right: 25px;
+    width: 380px;
+    max-width: calc(100vw - 32px);
+    height: 520px;
+    max-height: 80vh;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    animation: chatSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+@keyframes chatSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.chat-header {
+    background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chat-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+}
+
+.chat-status-dot {
+    width: 9px;
+    height: 9px;
+    background: #34d399;
+    border: 2px solid #064e3b;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+}
+
+.chat-body {
+    flex: 1;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-msg {
+    display: flex;
+    width: 100%;
+}
+
+.chat-msg-bot {
+    justify-content: flex-start;
+}
+
+.chat-msg-user {
+    justify-content: flex-end;
+}
+
+.chat-bubble {
+    max-width: 82%;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    word-break: break-word;
+}
+
+.bot-bubble {
+    background: #ffffff;
+    color: #1e293b;
+    border-radius: 18px 18px 18px 4px;
+    border: 1px solid #e2e8f0;
+}
+
+.user-bubble {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    border-radius: 18px 18px 4px 18px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.chat-chip {
+    font-size: 0.74rem;
+    padding: 5px 11px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 20px;
+    color: #065f46;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.chat-chip:hover {
+    background: #ecfdf5;
+    border-color: #10b981;
+    color: #047857;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15);
+}
+
+.chat-bullet {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding-left: 4px;
+}
+
+.typing-bubble {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 16px;
+}
+
+.typing-dot {
+    width: 7px;
+    height: 7px;
+    background: #94a3b8;
+    border-radius: 50%;
+    display: inline-block;
+    animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes typingBounce {
+    0%, 80%, 100% {
+        transform: scale(0);
+        opacity: 0.4;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+        background: #10b981;
+    }
+}
+
+/* ==========================================================================
+   🪴 MODERN CATEGORY & CATALOG REDESIGN STYLES
+   ========================================================================== */
+
+.category-page-container {
+    max-width: 1340px;
+    margin: 0 auto;
+}
+
+/* Hero Banner */
+.category-hero-banner {
+    background: linear-gradient(135deg, #052e16 0%, #064e3b 45%, #047857 100%);
+    box-shadow: 0 15px 35px rgba(6, 78, 59, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.category-hero-overlay {
+    position: relative;
+    z-index: 2;
+}
+
+.category-hero-banner::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(52, 211, 153, 0.2) 0%, rgba(6, 78, 59, 0) 70%);
+    pointer-events: none;
+}
+
+.backdrop-blur {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.fs-7 {
+    font-size: 0.8rem;
+}
+
+/* Category Navigation Pills */
+.category-scroll-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+.category-scroll-wrapper::-webkit-scrollbar {
+    height: 5px;
+}
+
+.category-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.category-nav-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 50px;
+    text-decoration: none;
+    color: #334155;
+    font-weight: 500;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.category-nav-pill:hover {
+    background: #f1f5f9;
+    color: #064e3b;
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.category-nav-pill.active {
+    background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+    color: #ffffff;
+    border-color: #047857;
+    box-shadow: 0 6px 16px rgba(4, 120, 87, 0.3);
+}
+
+.category-nav-pill .pill-count {
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+}
+
+.category-nav-pill.active .pill-count {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+/* Catalog Toolbar */
+.catalog-toolbar {
+    border: 1px solid #eef2f6;
+}
+
+/* Product Cards */
+.product-premium-card {
+    background: #ffffff;
+    border: 1px solid #eef2f6 !important;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-premium-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.08) !important;
+    border-color: #cbd5e1 !important;
+}
+
+.product-img-wrapper {
+    height: 240px;
+    width: 100%;
+    position: relative;
+}
+
+.product-card-img {
+    height: 240px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.product-premium-card:hover .product-card-img {
+    transform: scale(1.08);
+}
+
+.product-overlay-action {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    z-index: 3;
+}
+
+.product-premium-card:hover .product-overlay-action {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.product-wishlist-btn {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.product-wishlist-btn:hover {
+    background: #ffffff;
+    transform: scale(1.12);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.product-category-chip {
+    background: rgba(6, 78, 59, 0.85);
+    backdrop-filter: blur(6px);
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    text-transform: uppercase;
+}
+
+.btn-quick-cart {
+    transition: all 0.2s ease;
+}
+
+.btn-quick-cart:hover {
+    transform: scale(1.04);
+}
+
+/* Floating Toast */
+.toast-floating {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%) translateY(50px);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 50px;
+    padding: 12px 24px;
+    z-index: 2000;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.toast-floating.toast-show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Cart Badge Pulse */
+.pulse-badge {
+    animation: badgePulse 0.5s ease-in-out;
+}
+
+@keyframes badgePulse {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.6); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Empty State Card */
+.empty-category-card {
+    border: 1px dashed #cbd5e1;
+}
+
+/* Trust Perks */
+.trust-perks-section {
+    border: 1px solid #eef2f6;
+}

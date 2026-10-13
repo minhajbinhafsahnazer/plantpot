@@ -11,6 +11,7 @@ urlpatterns = [
     path('alt-login/', views.alt_login_view, name='alt_login'),
 
     # Category & Products
+    path('category/', views.category_products_view, name='all_categories'),
     path('category/<int:category_id>/', views.category_products_view, name='category_products'),
     path('product/<int:product_id>/', views.view_product, name='view_product'),
     path('profile/', views.profile_view, name='profile'),
@@ -30,4 +31,10 @@ urlpatterns = [
 
     #chatbot
     path('chatbot/', views.chat_with_ai, name='chat_with_ai'),
+
+    # Checkout
+    path('checkout/', views.checkout_page, name='checkout'),
+    path('create-checkout-session/', views.create_checkout_session, name='create_checkout_session'),
+    path('payment-success/', views.payment_success, name='payment_success'),
+    path('payment-cancel/', views.payment_cancel, name='payment_cancel'),
 ]

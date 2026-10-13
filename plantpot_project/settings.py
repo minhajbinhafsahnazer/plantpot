@@ -1,9 +1,12 @@
 from pathlib import Path
 import os
-
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file if present
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -15,7 +18,7 @@ SECRET_KEY = 'django-insecure-u3d)rjw9(ba9aod#6dj%++v_wk52o%0s8-0x^u823guq=3&5$7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver', '*']
 
 
 # Application definition
@@ -27,11 +30,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'plantapp.apps.PlantappConfig',
     'widget_tweaks',   # Custom app for plant pot management
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -122,3 +127,20 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Stripe keys (set real ones in environment variables for production)
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")  # from Stripe Dashboard
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+
+# Google Gemini API Key for PlantPot AI Chatbot
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+
+# CORS Settings for Next.js Frontend
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+]

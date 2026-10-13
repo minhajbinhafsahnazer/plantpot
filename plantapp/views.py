@@ -3,6 +3,8 @@ import random
 import requests
 import shlex
 import subprocess
+import stripe
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
@@ -16,6 +18,7 @@ from .models import UserProfile
 
 from .models import Category, Product, Wishlist, Cart, CartItem
 from .forms import RegisterForm
+from .gemini_service import generate_gemini_response
 
 # -----------------------------
 # 🔐 OTP LOGIN SYSTEM
@@ -117,18 +120,53 @@ def home(request):
           'show_party_popper': show_party_popper
           })
 
-def category_products_view(request, category_id):
-    category = get_object_or_404(Category, id=category_id)
-    products = Product.objects.filter(category=category)
+def category_products_view(request, category_id=None):
+    categories = Category.objects.all().prefetch_related('products')
+    search_query = request.GET.get('q', '').strip()
+    sort_by = request.GET.get('sort', 'default')
+
+    selected_category = None
+    if category_id:
+        selected_category = get_object_or_404(Category, id=category_id)
+        products = Product.objects.filter(category=selected_category)
+    else:
+        products = Product.objects.all()
+
+    if search_query:
+        products = products.filter(name__icontains=search_query) | products.filter(description__icontains=search_query)
+
+    if sort_by == 'price_low':
+        products = products.order_by('price')
+    elif sort_by == 'price_high':
+        products = products.order_by('-price')
+    elif sort_by == 'name_asc':
+        products = products.order_by('name')
 
     wishlist_products = []
     if request.user.is_authenticated:
-        wishlist_products = Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True)
+        wishlist_products = list(Wishlist.objects.filter(user=request.user).values_list('product_id', flat=True))
+
+    category_list = []
+    for cat in categories:
+        category_list.append({
+            'id': cat.id,
+            'name': cat.name,
+            'image': cat.image,
+            'count': cat.products.count(),
+            'is_active': bool(selected_category and cat.id == selected_category.id)
+        })
+
+    all_count = Product.objects.count()
 
     return render(request, 'plantapp/category_products.html', {
-        'category': category,
+        'category': selected_category,
+        'categories': category_list,
         'products': products,
-        'wishlist_products': wishlist_products
+        'wishlist_products': wishlist_products,
+        'search_query': search_query,
+        'sort_by': sort_by,
+        'total_count': products.count(),
+        'all_count': all_count,
     })
 
 def view_product(request, product_id):
@@ -298,9 +336,7 @@ def remove_cart_item(request, item_id):
     return redirect('cart')
 
 # -----------------------------
-# 🤖 CHATBOT VIEW
-
-
+# 🤖 CHATBOT VIEW (POWERED BY GOOGLE GEMINI)
 # -----------------------------
 @csrf_exempt
 @require_POST
@@ -310,58 +346,75 @@ def chat_with_ai(request):
         user_message = data.get('message', '').strip()
 
         if not user_message:
-            return JsonResponse({'response': "Please enter a message."})
+            return JsonResponse({'response': "Please enter a question or message."})
 
-        # 🧠 Better prompt structure using LLaMA-style chat tokens
-        prompt = f"""
-<|system|>
-You are PlantPot AI, a smart and friendly assistant for the PlantPot decor store.
-
-The store offers a wide range of interior decor products, including:
-- Designer lights (ambient, pendant, ceiling-mounted, and artistic pieces)
-- Designer carpets (leaf-patterned, minimal, boho, and nature-themed)
-- Indoor and outdoor plant pots (ceramic, terracotta, matte-finish, eco-friendly)
-- Table lamps (modern, rustic, compact for nightstands or work desks)
-
-You help users:
-- Find the right product based on their preferences (style, size, room type, color)
-- Get information about orders, returns, and delivery
-- Provide decor ideas and practical suggestions for styling different spaces
-- Recommend items based on themes like modern, vintage, cozy, or nature-inspired setups
-- Answer general questions about the store and its offerings
-- give contact information for customer support
-- plantpots owner is minhaj
-
-Speak in a warm, clear, human-like tone. Avoid repeating your identity in every response. Keep answers relevant, Keep ansers compact,  helpful, and to the point. Guide users conversationally — like a trusted home decor advisor.
-
-<|user|>
-{user_message}
-<|assistant|>
-"""
-
-        result = subprocess.run(
-            ['C:\\Users\\mirza\\AppData\\Local\\Programs\\Ollama\\ollama.exe', 'run', 'llama3:8b'],
-            input=prompt,
-            text=True,
-            capture_output=True,
-            encoding='utf-8',
-            timeout=30
-        )
-
-        output = result.stdout.strip()
-        if not output:
-            output = "🤖 Sorry, no response."
-
-        # 🧽 Clean accidental echoes like the prompt
-        if "PlantPot AI" in output and "I'm" in output:
-            lines = output.split("\n")
-            for i, line in enumerate(lines):
-                if "PlantPot AI" in line and "I'm" in line:
-                    # skip this intro line
-                    output = "\n".join(lines[i+1:])
-                    break
-
-        return JsonResponse({'response': output.strip()})
+        response_text = generate_gemini_response(user_message)
+        return JsonResponse({'response': response_text})
 
     except Exception as e:
-        return JsonResponse({'response': f"Error: {str(e)}"})
+        return JsonResponse({'response': f"⚠️ Error processing request: {str(e)}"})
+
+
+
+# strip payment keys from settings.py
+#
+#
+#
+# -----------------------------
+# 🏦 STRIPE PAYMENT VIEWS
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+@login_required
+def checkout_page(request):
+    cart, _ = Cart.objects.get_or_create(user=request.user)
+    items = cart.items.select_related('product')
+
+    # ✅ FIX: Don't call .subtotal(), it's a property
+    total_amount = sum(item.subtotal for item in items)
+
+    return render(request, 'plantapp/checkout.html', {
+        'cart': cart,
+        'total_amount': total_amount,
+        'stripe_publishable_key': settings.STRIPE_PUBLISHABLE_KEY,
+    })
+
+
+@login_required
+def create_checkout_session(request):
+    cart, _ = Cart.objects.get_or_create(user=request.user)
+    items = cart.items.select_related('product')
+
+    if not items:
+        return JsonResponse({'error': 'Your cart is empty.'}, status=400)
+
+    line_items = []
+    for item in items:
+        line_items.append({
+            'price_data': {
+                'currency': 'inr',
+                'product_data': {
+                    'name': item.product.name,
+                },
+                'unit_amount': int(item.product.price * 100),
+            },
+            'quantity': item.quantity,
+        })
+
+    session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        line_items=line_items,
+        mode='payment',
+        success_url=request.build_absolute_uri('/payment-success/'),
+        cancel_url=request.build_absolute_uri('/payment-cancel/'),
+    )
+
+    return JsonResponse({'id': session.id})
+    
+
+def payment_success(request):
+    return render(request, 'plantapp/payment_success.html')
+
+
+def payment_cancel(request):
+    return render(request, 'plantapp/payment_cancel.html')
