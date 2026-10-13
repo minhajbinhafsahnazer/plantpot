@@ -90,8 +90,54 @@ def build_image_url(request, field):
 # Endpoints
 # -------------------------------------------------------------
 
+
+def ensure_curated_data():
+    """Seeds luxury catalog if empty."""
+    try:
+        if not Product.objects.exists():
+            cat_furn, _ = Category.objects.get_or_create(name='Furniture')
+            cat_light, _ = Category.objects.get_or_create(name='Lighting')
+            cat_text, _ = Category.objects.get_or_create(name='Carpets & Textiles')
+            cat_pot, _ = Category.objects.get_or_create(name='Objects & Pots')
+
+            Product.objects.get_or_create(
+                name='Verona Sofa',
+                defaults={
+                    'category': cat_furn,
+                    'price': 2850,
+                    'description': 'Gentle sweeping silhouette wrapped in tactile cream boucle with an internal kiln-dried ash wood framework.'
+                }
+            )
+            Product.objects.get_or_create(
+                name='Dune Table Lamp',
+                defaults={
+                    'category': cat_light,
+                    'price': 480,
+                    'description': 'Wheel-thrown porous stoneware vessel paired with a coarse woven unbleached Belgian linen lampshade.'
+                }
+            )
+            Product.objects.get_or_create(
+                name='Sienna Wool Rug',
+                defaults={
+                    'category': cat_text,
+                    'price': 890,
+                    'description': 'Hand-tufted organic New Zealand wool featuring tactile sculpted waves and subtle natural cream variation.'
+                }
+            )
+            Product.objects.get_or_create(
+                name='Earthen Vessel',
+                defaults={
+                    'category': cat_pot,
+                    'price': 195,
+                    'description': 'Artisanal hand-sculpted ceramic plant pot with soft mineral patina, ideal for olive branches and indoor flora.'
+                }
+            )
+    except Exception as e:
+        print('Seed error:', e)
+
 @api.get("/categories", response=List[CategoryOut], tags=["Catalog"])
 def list_categories(request):
+    ensure_curated_data()
     """Retrieve all categories with their product counts and image URLs."""
     categories = Category.objects.all()
     results = []
@@ -107,6 +153,7 @@ def list_categories(request):
 
 @api.get("/products", response=List[ProductOut], tags=["Catalog"])
 def list_products(request, category_id: Optional[int] = None):
+    ensure_curated_data()
     """Retrieve products, optionally filtered by category."""
     qs = Product.objects.select_related('category').all()
     if category_id:

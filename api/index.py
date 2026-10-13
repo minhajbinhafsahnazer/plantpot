@@ -19,7 +19,7 @@ from django.db import connection
 try:
     tables = connection.introspection.table_names()
     if 'plantapp_product' not in tables:
-        call_command('migrate', interactive=False)
+        call_command('migrate', interactive=False, verbosity=0)
         from plantapp.models import Category, Product
         cat_furn, _ = Category.objects.get_or_create(name='Furniture')
         cat_light, _ = Category.objects.get_or_create(name='Lighting')
@@ -31,7 +31,7 @@ try:
             defaults={
                 'category': cat_furn,
                 'price': 2850,
-                'description': 'Gentle sweeping silhouette wrapped in tactile cream bouclé with an internal kiln-dried ash wood framework.'
+                'description': 'Gentle sweeping silhouette wrapped in tactile cream boucle with an internal kiln-dried ash wood framework.'
             }
         )
         Product.objects.get_or_create(
@@ -59,7 +59,8 @@ try:
             }
         )
 except Exception as e:
-    print('Vercel startup notice:', e)
+    import traceback
+    traceback.print_exc()
 
 app = get_wsgi_application()
 handler = app
