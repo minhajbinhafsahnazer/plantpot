@@ -78,15 +78,16 @@ WSGI_APPLICATION = 'plantpot_project.wsgi.application'
 if os.getenv("VERCEL"):
     import shutil
     tmp_db = Path('/tmp/db.sqlite3')
-    if not tmp_db.exists() and (BASE_DIR / 'db.sqlite3').exists():
+    bundled_db = BASE_DIR / 'db.sqlite3'
+    if not tmp_db.exists() and bundled_db.exists():
         try:
-            shutil.copyfile(BASE_DIR / 'db.sqlite3', tmp_db)
+            shutil.copyfile(bundled_db, tmp_db)
         except Exception:
             pass
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': tmp_db if tmp_db.exists() else (BASE_DIR / 'db.sqlite3'),
+            'NAME': tmp_db,
         }
     }
 else:
