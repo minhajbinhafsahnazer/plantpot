@@ -61,4 +61,15 @@ try:
 except Exception as e:
     print('Vercel startup notice:', e)
 
-app = get_wsgi_application()
+class VercelPathMiddleware:
+    """Restores actual requested URL from Vercel rewrite headers."""
+    def __init__(self, wsgi_app):
+        self.wsgi_app = wsgi_app
+
+    def __call__(self, environ, start_response):
+        matched = environ.get('HTTP_X_MATCHED_PATH')
+        if matched:
+            environ['PATH_INFO'] = matched
+        return self.wsgi_app(environ, start_response)
+
+app = VercelPathMiddleware(get_wsgi_application())
